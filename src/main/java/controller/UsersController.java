@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -30,6 +31,9 @@ public class UsersController extends HttpServlet {
 			// Listagem dos usuários
 			listUsers(req);
 			
+			// Redirecionar para a página de exibição (index)
+			RequestDispatcher rd = req.getRequestDispatcher("index.jsp");
+			rd.forward(req, resp);
 //			resp.sendRedirect("index.jsp");
 			break;
 		}

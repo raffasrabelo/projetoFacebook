@@ -1,3 +1,5 @@
+<jsp:directive.page contentType="text/html; charset=UTF-8" />
+<%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,7 +11,7 @@
 <body>
 	
 	<div class="container">
-		<h1>Usuários</h1>
+		<h1>UsuÃ¡rios</h1>
 		<div class="row">
 			<table class="table">
 			  <thead>
@@ -21,23 +23,14 @@
 			    </tr>
 			  </thead>
 			  <tbody>
+			  	<c:forEach var="usuario" items="${usuarios}">
 			    <tr>
-			      <th scope="row">1</th>
-			      <td>Mark</td>
-			      <td>Otto</td>
-			      <td>@mdo</td>
+			      <td>${usuarios.getId()}</td>
+			      <td>${usuarios.getName() }</td>
+			      <td>${usuarios.getGender() }</td>
+			      <td>${usuarios.getEmail() }</td>
 			    </tr>
-			    <tr>
-			      <th scope="row">2</th>
-			      <td>Jacob</td>
-			      <td>Thornton</td>
-			      <td>@fat</td>
-			    </tr>
-			    <tr>
-			      <th scope="row">3</th>
-			      <td colspan="2">Larry the Bird</td>
-			      <td>@twitter</td>
-			    </tr>
+			    </c:forEach>
 			  </tbody>
 			</table>
 		</div>
