@@ -25,14 +25,16 @@
 			  <tbody>
 			  	<c:forEach var="usuario" items="${usuarios}">
 			    <tr>
-			      <td>${usuarios.getId()}</td>
-			      <td>${usuarios.getName() }</td>
-			      <td>${usuarios.getGender() }</td>
-			      <td>${usuarios.getEmail() }</td>
+			      <td>${usuario.getId()}</td>
+			      <td>${usuario.getName() }</td>
+			      <td>${usuario.getGender() }</td>
+			      <td>${usuario.getEmail() }</td>
 			    </tr>
 			    </c:forEach>
 			  </tbody>
 			</table>
+			
+			<a href="form_user.jsp" class="btn btn-primary">Novo Usuário</a>
 		</div>
 	</div>	
 	

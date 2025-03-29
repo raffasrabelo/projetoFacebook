@@ -16,7 +16,7 @@ import model.dao.DAOFactory;
 import model.dao.UserDAO;
 
 //Rotas
-@WebServlet(urlPatterns = {""})
+@WebServlet(urlPatterns = {"", "/create"})
 public class UsersController extends HttpServlet {
 
 	@Override
@@ -37,7 +37,13 @@ public class UsersController extends HttpServlet {
 //			resp.sendRedirect("index.jsp");
 			break;
 		}
-		
+		case "/facebook/create" :{
+			
+			insertUser(req);
+			
+			resp.sendRedirect("/facebook/");
+			break;
+		}
 		default: 
 			throw new IllegalArgumentException("URL não reconhecida: "+ action);
 		}
@@ -56,5 +62,27 @@ public class UsersController extends HttpServlet {
 		
 		req.setAttribute("usuarios", users);
 		
+	}
+	private void insertUser(HttpServletRequest res) {
+		// Recuperando os parametros da requisição
+					// Inputs (name) do html
+					String userName = req.getParameter("user_name");
+					String userGender = req.getParameter("user_gender");
+					String userEmail = req.getParameter("user_email");
+					
+					//Cria e seta os valores do usuário
+					User user = new User();
+					user.setName(userName);
+					user.setGender(userGender);
+					user.setEmail(userEmail);
+								
+					//Salva o usuário no Banco
+					UserDAO dao = DAOFactory.createDAO(UserDAO.class);
+					try {
+						dao.save(user);
+					} catch (ModelException e) {
+						System.err.println("Erro ao salvar usuário");
+						e.printStackTrace();
+					}
 	}
 }
