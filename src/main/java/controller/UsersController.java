@@ -16,7 +16,7 @@ import model.dao.DAOFactory;
 import model.dao.UserDAO;
 
 //Rotas
-@WebServlet(urlPatterns = {"", "/create"})
+@WebServlet(urlPatterns = {"", "/user/create", "/user/update", "/user/delete"})
 public class UsersController extends HttpServlet {
 
 	@Override
@@ -34,16 +34,62 @@ public class UsersController extends HttpServlet {
 			// Redirecionar para a página de exibição (index)
 			RequestDispatcher rd = req.getRequestDispatcher("index.jsp");
 			rd.forward(req, resp);
-//			resp.sendRedirect("index.jsp");
 			break;
 		}
-		case "/facebook/create" :{
+		case "/facebook/user/create" :{
 			
-			insertUser(req);
+			saveUser(req);
+			
 			
 			resp.sendRedirect("/facebook/");
 			break;
 		}
+		
+		case "/facebook/user/update" :{
+			
+			String userIDStr= req.getParameter("userId");
+			int userId = Integer.parseInt(userIDStr);
+			
+			UserDAO dao = DAOFactory.createDAO(UserDAO.class);
+			
+			User user = new User();
+			try {
+				user = dao.findById(userId);
+			} catch (ModelException e) {
+				// Tratar erro depois
+				e.printStackTrace(); // não é mostrado pro cliente. Apenas servidor.
+			}
+			
+			req.setAttribute("usuario", user);
+			
+			RequestDispatcher rd = req.getRequestDispatcher("/form_user.jsp");
+			rd.forward(req, resp);
+			
+			break;
+		}
+		
+		case "/facebook/user/delete" : {
+			
+			String userIDStr= req.getParameter("userId");
+			int userId = Integer.parseInt(userIDStr);
+			
+			UserDAO dao = DAOFactory.createDAO(UserDAO.class);
+			
+			User user = new User(userId);
+			try {
+				dao.delete(user);
+			} catch (ModelException e) {
+				// Tratar erro depois
+				e.printStackTrace(); // não é mostrado pro cliente. Apenas servidor.
+			}
+			
+			//Redireciona para a listagem
+			resp.sendRedirect("/facebook");
+			break;
+		}
+			
+			
+		
 		default: 
 			throw new IllegalArgumentException("URL não reconhecida: "+ action);
 		}
@@ -63,23 +109,31 @@ public class UsersController extends HttpServlet {
 		req.setAttribute("usuarios", users);
 		
 	}
-	private void insertUser(HttpServletRequest res) {
+	private void saveUser(HttpServletRequest req) {
 		// Recuperando os parametros da requisição
 					// Inputs (name) do html
+					String userIdStr = req.getParameter("user_id");
 					String userName = req.getParameter("user_name");
 					String userGender = req.getParameter("user_gender");
 					String userEmail = req.getParameter("user_email");
 					
+					boolean newUser = userIdStr.equals("");
+					
 					//Cria e seta os valores do usuário
-					User user = new User();
+					User user = newUser ? new User() : new User(Integer.parseInt(userIdStr));
 					user.setName(userName);
 					user.setGender(userGender);
 					user.setEmail(userEmail);
+					
+					
 								
 					//Salva o usuário no Banco
 					UserDAO dao = DAOFactory.createDAO(UserDAO.class);
 					try {
-						dao.save(user);
+						if(newUser)
+							dao.save(user);
+						else
+							dao.update(user);
 					} catch (ModelException e) {
 						System.err.println("Erro ao salvar usuário");
 						e.printStackTrace();

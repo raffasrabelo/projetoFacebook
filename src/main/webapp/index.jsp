@@ -29,6 +29,15 @@
 			      <td>${usuario.getName() }</td>
 			      <td>${usuario.getGender() }</td>
 			      <td>${usuario.getEmail() }</td>
+			      
+			      <td>
+			      	<a href="${pageContext.request.contextPath}/user/update?userId=${usuario.getId()}" class="bi bi-pencil-square"></a>
+			      </td>
+			      
+			      <td>
+			      	<a href="${pageContext.request.contextPath}/user/delete?userId=${usuario.getId()}" class="bi bi-trash"></a>
+			      </td>
+			      
 			    </tr>
 			    </c:forEach>
 			  </tbody>
