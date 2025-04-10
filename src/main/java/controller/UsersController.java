@@ -16,7 +16,7 @@ import model.dao.DAOFactory;
 import model.dao.UserDAO;
 
 //Rotas
-@WebServlet(urlPatterns = {"", "/user/create", "/user/update", "/user/delete"})
+@WebServlet(urlPatterns = {"/users", "/user/create", "/user/update", "/user/delete"})
 public class UsersController extends HttpServlet {
 
 	@Override
@@ -27,12 +27,12 @@ public class UsersController extends HttpServlet {
 		System.out.println(action);
 		
 		switch (action) {
-		case "/facebook/": {
+		case "/facebook/users": {
 			// Listagem dos usuários
 			listUsers(req);
 			
 			// Redirecionar para a página de exibição (index)
-			RequestDispatcher rd = req.getRequestDispatcher("index.jsp");
+			RequestDispatcher rd = req.getRequestDispatcher("users.jsp");
 			rd.forward(req, resp);
 			break;
 		}
@@ -41,58 +41,71 @@ public class UsersController extends HttpServlet {
 			saveUser(req);
 			
 			
-			resp.sendRedirect("/facebook/");
+			resp.sendRedirect("/facebook/users");
 			break;
 		}
 		
 		case "/facebook/user/update" :{
 			
-			String userIDStr= req.getParameter("userId");
-			int userId = Integer.parseInt(userIDStr);
-			
-			UserDAO dao = DAOFactory.createDAO(UserDAO.class);
-			
-			User user = new User();
-			try {
-				user = dao.findById(userId);
-			} catch (ModelException e) {
-				// Tratar erro depois
-				e.printStackTrace(); // não é mostrado pro cliente. Apenas servidor.
-			}
-			
-			req.setAttribute("usuario", user);
-			
-			RequestDispatcher rd = req.getRequestDispatcher("/form_user.jsp");
-			rd.forward(req, resp);
+			updateUser(req, resp);
 			
 			break;
 		}
 		
 		case "/facebook/user/delete" : {
 			
-			String userIDStr= req.getParameter("userId");
-			int userId = Integer.parseInt(userIDStr);
-			
-			UserDAO dao = DAOFactory.createDAO(UserDAO.class);
-			
-			User user = new User(userId);
-			try {
-				dao.delete(user);
-			} catch (ModelException e) {
-				// Tratar erro depois
-				e.printStackTrace(); // não é mostrado pro cliente. Apenas servidor.
-			}
-			
-			//Redireciona para a listagem
-			resp.sendRedirect("/facebook");
+			deleteUser(req, resp);
 			break;
 		}
 			
-			
+		case "/facebook/": {
+			// Redirecionar para a página de exibição (index)
+			RequestDispatcher rd = req.getRequestDispatcher("index.jsp");
+			rd.forward(req, resp);
+			break;	
+		}
 		
 		default: 
 			throw new IllegalArgumentException("URL não reconhecida: "+ action);
 		}
+	}
+
+	private void deleteUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		String userIDStr= req.getParameter("userId");
+		int userId = Integer.parseInt(userIDStr);
+		
+		UserDAO dao = DAOFactory.createDAO(UserDAO.class);
+		
+		User user = new User(userId);
+		try {
+			dao.delete(user);
+		} catch (ModelException e) {
+			// Tratar erro depois
+			e.printStackTrace(); // não é mostrado pro cliente. Apenas servidor.
+		}
+		
+		//Redireciona para a listagem
+		resp.sendRedirect("/facebook/users");
+	}
+
+	private void updateUser(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String userIDStr= req.getParameter("userId");
+		int userId = Integer.parseInt(userIDStr);
+		
+		UserDAO dao = DAOFactory.createDAO(UserDAO.class);
+		
+		User user = new User();
+		try {
+			user = dao.findById(userId);
+		} catch (ModelException e) {
+			// Tratar erro depois
+			e.printStackTrace(); // não é mostrado pro cliente. Apenas servidor.
+		}
+		
+		req.setAttribute("usuario", user);
+		
+		RequestDispatcher rd = req.getRequestDispatcher("/form_user.jsp");
+		rd.forward(req, resp);
 	}
 
 	private void listUsers(HttpServletRequest req) {
@@ -138,5 +151,6 @@ public class UsersController extends HttpServlet {
 						System.err.println("Erro ao salvar usuário");
 						e.printStackTrace();
 					}
+					
 	}
 }

@@ -20,6 +20,8 @@ public class MySQLUserDAO implements UserDAO {
 		db.setString(1, user.getName());
 		db.setString(2, user.getGender());
 		db.setString(3, user.getEmail());
+		db.setString(4, user.getPassword());
+		
 		  
 		return db.executeUpdate() > 0;
 	}
@@ -33,6 +35,7 @@ public class MySQLUserDAO implements UserDAO {
 				         	+ "SET nome = ?, "
 				         	+ "sexo = ?, "
 				         	+ "email = ? "
+				         	+ "password = ?"
 				         + "WHERE id = ?";
 		
 		
@@ -42,6 +45,7 @@ public class MySQLUserDAO implements UserDAO {
 		db.setString(2, user.getGender());
 		db.setString(3, user.getEmail());
 		db.setInt(4, user.getId());
+		db.setString(5, user.getPassword());
 		
 		return db.executeUpdate() > 0;
 	}
@@ -107,6 +111,7 @@ public class MySQLUserDAO implements UserDAO {
 		u.setName(db.getString("nome"));
 		u.setGender(db.getString("sexo"));
 		u.setEmail(db.getString("email"));
+		u.setPassword(db.getString("password"));
 		
 		return u;
 	}
