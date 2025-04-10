@@ -14,7 +14,7 @@ public class MySQLUserDAO implements UserDAO {
 		DBHandler db = new DBHandler();
 		
 		String sqlInsert = "INSERT INTO users VALUES "
-				+ " (DEFAULT, ?, ?, ?);";
+				+ " (DEFAULT, ?, ?, ?, ?);";
 		
 		db.prepareStatement(sqlInsert);
 		db.setString(1, user.getName());

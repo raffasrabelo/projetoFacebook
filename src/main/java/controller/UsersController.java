@@ -14,6 +14,7 @@ import model.ModelException;
 import model.User;
 import model.dao.DAOFactory;
 import model.dao.UserDAO;
+import model.utils.PasswordEncryptor;
 
 //Rotas
 @WebServlet(urlPatterns = {"/users", "/user/create", "/user/update", "/user/delete"})
@@ -60,13 +61,12 @@ public class UsersController extends HttpServlet {
 			
 		case "/facebook/": {
 			// Redirecionar para a página de exibição (index)
-			RequestDispatcher rd = req.getRequestDispatcher("index.jsp");
-			rd.forward(req, resp);
+			req.getRequestDispatcher("index.jsp").forward(req, resp);
 			break;	
 		}
 		
 		default: 
-			throw new IllegalArgumentException("URL não reconhecida: "+ action);
+			 resp.sendError(HttpServletResponse.SC_NOT_FOUND, "URL não reconhecida: " + action);
 		}
 	}
 
@@ -91,7 +91,7 @@ public class UsersController extends HttpServlet {
 	private void updateUser(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String userIDStr= req.getParameter("userId");
 		int userId = Integer.parseInt(userIDStr);
-		
+	
 		UserDAO dao = DAOFactory.createDAO(UserDAO.class);
 		
 		User user = new User();
@@ -129,6 +129,11 @@ public class UsersController extends HttpServlet {
 					String userName = req.getParameter("user_name");
 					String userGender = req.getParameter("user_gender");
 					String userEmail = req.getParameter("user_email");
+					String userPassword = req.getParameter("user_password");
+					
+//					if(userPassword==null || userPassword=="") {
+//					----------------- A FAZER -----------------
+//					}
 					
 					boolean newUser = userIdStr.equals("");
 					
@@ -137,6 +142,7 @@ public class UsersController extends HttpServlet {
 					user.setName(userName);
 					user.setGender(userGender);
 					user.setEmail(userEmail);
+					user.setPassword(PasswordEncryptor.hashPassword(userPassword));
 					
 					
 								
