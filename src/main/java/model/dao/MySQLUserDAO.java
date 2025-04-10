@@ -34,7 +34,7 @@ public class MySQLUserDAO implements UserDAO {
 		String sqlUpdate = "UPDATE users "
 				         	+ "SET nome = ?, "
 				         	+ "sexo = ?, "
-				         	+ "email = ? "
+				         	+ "email = ?, "
 				         	+ "password = ?"
 				         + "WHERE id = ?";
 		
@@ -44,8 +44,9 @@ public class MySQLUserDAO implements UserDAO {
 		db.setString(1, user.getName());
 		db.setString(2, user.getGender());
 		db.setString(3, user.getEmail());
-		db.setInt(4, user.getId());
-		db.setString(5, user.getPassword());
+		db.setString(4, user.getPassword());
+		db.setInt(5, user.getId());
+		
 		
 		return db.executeUpdate() > 0;
 	}
