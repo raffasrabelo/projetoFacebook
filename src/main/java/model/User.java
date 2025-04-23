@@ -17,7 +17,6 @@ public class User {
 		setGender("");
 		setEmail("");
 		setPassword("");
-		
 	}
 
 	public String getName() {
@@ -47,14 +46,12 @@ public class User {
 	public int getId() {
 		return id;
 	}
-
+	
 	public String getPassword() {
 		return password;
 	}
-
+	
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	
 }

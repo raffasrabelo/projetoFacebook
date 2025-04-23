@@ -22,10 +22,10 @@
 				
 				<div class="d-flex justify-content-between align-items-center mb-3">
 			 
-				  <h1 class="m-0">Usuários</h1>
+				  <h1 class="m-0">Posts</h1>
 				
-				  <a href="form_user.jsp" class="btn btn-primary">
-				    Novo Usuário
+				  <a href="form_post.jsp" class="btn btn-primary">
+				    Novo Post
 				  </a>
 			
 				</div>
@@ -34,25 +34,25 @@
 					<thead>
 						<tr>
 							<th scope="col">Id</th>
-							<th scope="col">Nome</th>
-							<th scope="col">Sexo</th>
-							<th scope="col">E-mail</th>
+							<th scope="col">Conteúdo</th>
+							<th scope="col">Data</th>
+							<th scope="col">Id Usuário</th>
 							<th scope="col">Editar</th>
 							<th scope="col">Remover</th>
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach var="usuario" items="${usuarios}">
+						<c:forEach var="post" items="${posts}">
 							<tr>
-								<th scope="row">${usuario.getId()}</th>
-								<td scope="row">${usuario.getName()}</td>
-								<td scope="row">${usuario.getGender()}</td>
-								<td scope="row">${usuario.getEmail()}</td>
+								<th scope="row">${post.getId()}</th>
+								<td scope="row">${post.getContent()}</td>
+								<td scope="row">${post.getPostDate()}</td>
+								<td scope="row">${post.getUser().getId()} - ${post.getUser().getName()} </td>
 								<td>
-									<a class="bi bi-pencil-square" href="${pageContext.request.contextPath}/user/update?userId=${usuario.getId()}"></a>
+									<a class="bi bi-pencil-square" href="${pageContext.request.contextPath}/post/update?postId=${post.getId()}"></a>
 								</td>
 								<td>
-									<a class="bi bi-trash" href="${pageContext.request.contextPath}/user/delete?userId=${usuario.getId()}"></a>
+									<a class="bi bi-trash" href="${pageContext.request.contextPath}/post/delete?postId=${post.getId()}"></a>
 								</td>
 							</tr>
 						</c:forEach>
