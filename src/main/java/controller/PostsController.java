@@ -1,5 +1,10 @@
 package controller;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -7,10 +12,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.ModelException;
 import model.Post;
+import model.User;
 import model.dao.DAOFactory;
 import model.dao.PostDAO;
-import java.io.IOException;
-import java.util.List;
+import model.dao.UserDAO;
 
 /**
  * Servlet implementation class PostsController
@@ -35,10 +40,67 @@ public class PostsController extends HttpServlet {
 			break;
 		}
 		
+		case "/facebook/post/save": {
+			String postId = req.getParameter("post_id");
+			if (postId != null && !postId.equals(""))
+				updatePost(req);
+			else insertPost(req);
+		}
+		
 		}
 	}
 
 	
+	private void insertPost(HttpServletRequest req) {
+		Post post = createPost(req);
+		
+		PostDAO dao = DAOFactory.createDAO(PostDAO.class);
+		
+		try {
+			dao.save(post);
+		} catch (ModelException e) {
+			// log no servidor
+			e.printStackTrace();
+		}
+	}
+
+
+	private Post createPost(HttpServletRequest req) {
+		String postId = req.getParameter("post_id");
+		String postContent = req.getParameter("post_content");
+		Date postDate = new Date();
+		UserDAO dao = DAOFactory.createDAO(UserDAO.class);
+		User postOwner = null;
+		try {
+			postOwner = dao.findById(Integer.parseInt(req.getParameter("post_owner")));
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		Post post;
+		
+		if (postId.equals(""))
+			post = new Post();
+		else post = new Post(Integer.parseInt(postId)); // NÃO ENTENDI MUITO BEM
+		
+		post.setContent(postContent);
+		post.setPostDate(postDate);
+		post.setUser(postOwner);
+		return post;
+	}
+
+
+	private void updatePost(HttpServletRequest req) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) 
 			throws ServletException, IOException {
 		
