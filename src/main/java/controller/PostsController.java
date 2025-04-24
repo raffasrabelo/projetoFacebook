@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -45,8 +46,28 @@ public class PostsController extends HttpServlet {
 			if (postId != null && !postId.equals(""))
 				updatePost(req);
 			else insertPost(req);
+			
+			resp.sendRedirect("/facebook/posts");
+			break;
 		}
 		
+		case "/facebook/post/update": {
+			loadPost(req);
+
+            RequestDispatcher rd = req.getRequestDispatcher("/form_post.jsp");
+            rd.forward(req, resp);
+            break;
+		}
+		
+		case "/facebook/post/delete": {
+
+            deletePost(req);
+
+            resp.sendRedirect("/facebook/posts");
+            break;
+        }
+        default:
+            throw new IllegalArgumentException("Unexpected value: " + action);
 		}
 	}
 
@@ -69,55 +90,99 @@ public class PostsController extends HttpServlet {
 		String postId = req.getParameter("post_id");
 		String postContent = req.getParameter("post_content");
 		Date postDate = new Date();
+		String postUser = req.getParameter("post_user");
+		int postUserId = Integer.parseInt(postUser);
 		UserDAO dao = DAOFactory.createDAO(UserDAO.class);
-		User postOwner = null;
-		try {
-			postOwner = dao.findById(Integer.parseInt(req.getParameter("post_owner")));
-		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ModelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+	
 		
 		Post post;
 		
 		if (postId.equals(""))
 			post = new Post();
-		else post = new Post(Integer.parseInt(postId)); // NÃO ENTENDI MUITO BEM
+		else post = new Post(Integer.parseInt(postId));
+		
 		
 		post.setContent(postContent);
 		post.setPostDate(postDate);
-		post.setUser(postOwner);
+		try {
+			post.setUser(dao.findById(postUserId));
+		} catch (ModelException e) {
+			e.printStackTrace();
+		}
 		return post;
 	}
 
 
 	private void updatePost(HttpServletRequest req) {
-		// TODO Auto-generated method stub
-		
-	}
+        Post post = createPost(req);
 
+        PostDAO dao = DAOFactory.createDAO(PostDAO.class);
 
+        try {
+            dao.update(post);
+        } catch (ModelException e) {
+            // log no servidor
+            e.printStackTrace();
+        }
+    }
+	
+	 private void deletePost(HttpServletRequest req) {
+	        String postIdString = req.getParameter("postId");
+	        int postId = Integer.parseInt(postIdString);
+
+	        Post post = new Post(postId);
+
+	        PostDAO dao = DAOFactory.createDAO(PostDAO.class);
+
+	        try {
+	            dao.delete(post);
+	        } catch (ModelException e) {
+	            // log no servidor
+	            e.getCause().printStackTrace();
+	            e.printStackTrace();
+	        }
+	    }
+
+	private void loadPosts(HttpServletRequest req) {
+			PostDAO dao = DAOFactory.createDAO(PostDAO.class);
+			
+			List<Post> posts = null;
+			try {
+				posts = dao.listAll();
+			} catch (ModelException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			if (posts != null)
+				req.setAttribute("posts", posts); //o primeiro é a lista no jsp; o segundo é a lista que foi gerada pelo controller no java.
+		}
+	
+	private void loadPost(HttpServletRequest req) {
+        String postIdParameter = req.getParameter("postId");
+
+        int postId = Integer.parseInt(postIdParameter);
+
+        PostDAO dao = DAOFactory.createDAO(PostDAO.class);
+
+        try {
+            Post post = dao.findById(postId);
+
+            if (post == null)
+                throw new ModelException("Post não encontrado para alteração");
+
+            req.setAttribute("post", post);
+        } catch (ModelException e) {
+            // log no servidor
+            e.printStackTrace();
+        }
+    }
+	
+	
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) 
 			throws ServletException, IOException {
 		
 	}
 
-	private void loadPosts(HttpServletRequest req) {
-		PostDAO dao = DAOFactory.createDAO(PostDAO.class);
-		
-		List<Post> posts = null;
-		try {
-			posts = dao.listAll();
-		} catch (ModelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		if (posts != null)
-			req.setAttribute("posts", posts); //o primeiro é a lista no jsp; o segundo é a lista que foi gerada pelo controller no java.
-	}
+	
 }

@@ -30,9 +30,9 @@
 				</div>
 
 				<div class="mb-3">
-					<label for="post_owner" class="form-label">Usuário</label> 
+					<label for="post_user" class="form-label">Usuário</label> 
 					<input
-						type="text" id="post_owner" name="post_owner"
+						type="text" id="post_user" name="post_user"
 						class="form-control" value="${post.getUser().getId()}" required>
 				</div>
 			
