@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.ModelException;
 import model.User;
 import model.dao.DAOFactory;
@@ -39,5 +40,18 @@ public class LoginController extends HttpServlet {
 		}else resp.sendRedirect("/facebook/login.jsp?erro=true");
 		
 	}
+	
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) 
+            throws ServletException, IOException {
+        
+        // O att false indica que não é para criar uma 
+        // sessão caso ela não exista
+        HttpSession session = req.getSession(false);
+        
+        if (session != null)
+            session.invalidate();
+        
+        resp.sendRedirect("/facebook/login.jsp");
+    }
 
 }

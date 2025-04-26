@@ -21,7 +21,7 @@ import model.dao.UserDAO;
 /**
  * Servlet implementation class PostsController
  */
-@WebServlet(urlPatterns = {"/post/delete", "/post/update", "/post/save", "/posts"})
+@WebServlet(urlPatterns = {"/post/delete", "/post/update", "/post/save", "/posts", "/form_post"})
 public class PostsController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -66,6 +66,12 @@ public class PostsController extends HttpServlet {
             resp.sendRedirect("/facebook/posts");
             break;
         }
+		case "/facebook/form_post": {
+			loadUsers(req);
+			RequestDispatcher rd = req.getRequestDispatcher("/form_post.jsp");
+            rd.forward(req, resp);
+            break;
+		}
         default:
             throw new IllegalArgumentException("Unexpected value: " + action);
 		}
@@ -90,7 +96,7 @@ public class PostsController extends HttpServlet {
 		String postId = req.getParameter("post_id");
 		String postContent = req.getParameter("post_content");
 		Date postDate = new Date();
-		String postUser = req.getParameter("post_user");
+		String postUser = req.getParameter("user_id");
 		int postUserId = Integer.parseInt(postUser);
 		UserDAO dao = DAOFactory.createDAO(UserDAO.class);
 	
@@ -176,8 +182,24 @@ public class PostsController extends HttpServlet {
             // log no servidor
             e.printStackTrace();
         }
+        
+        
     }
 	
+	private void loadUsers(HttpServletRequest req) {
+		UserDAO dao = DAOFactory.createDAO(UserDAO.class);
+
+		List<User> users = null;
+		try {
+			users = dao.listAll();
+		} catch (ModelException e) {
+			// Log no servidor
+			e.printStackTrace();
+		}
+
+		if (users != null)
+			req.setAttribute("usuarios", users);
+	}
 	
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) 
 			throws ServletException, IOException {

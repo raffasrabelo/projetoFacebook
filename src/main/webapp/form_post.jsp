@@ -23,19 +23,20 @@
 					value="${post.getId()}" required>
 
 				<div class="mb-3">
-					<label for="post_content" class="form-label">Conteúdo</label> 
-					<input
+					<label for="post_content" class="form-label">Conteúdo</label> <input
 						type="text" id="post_content" name="post_content"
 						class="form-control" value="${post.getContent()}" required>
 				</div>
 
 				<div class="mb-3">
 					<label for="post_user" class="form-label">Usuário</label> 
-					<input
-						type="text" id="post_user" name="post_user"
-						class="form-control" value="${post.getUser().getId()}" required>
+					<select name="user_id">
+						<c:forEach var="usuario" items="${usuarios}">
+							<option value="${usuario.id}">${usuario.name}</option>
+						</c:forEach>
+					</select>
 				</div>
-			
+
 				<button type="submit" class="btn btn-primary">Enviar</button>
 			</form>
 
